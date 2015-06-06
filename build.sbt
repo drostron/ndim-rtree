@@ -43,8 +43,6 @@ lazy val rootSettings = Seq(
 lazy val root = Project("ndim-rtree", file("."))
   .settings(commonSettings:_*)
   .settings(rootSettings:_*)
-  .settings(tutSettings:_*)
-  .settings(tutSourceDirectory := file("slides/tut"))
 
 lazy val benchmarkSettings = Seq(
   fork in run := true,
