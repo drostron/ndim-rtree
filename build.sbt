@@ -2,9 +2,6 @@
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.6",
 
-  // cached resolution appears to conflict with ctags generation for dependencies
-  // updateOptions := updateOptions.value.withCachedResolution(true),
-
   // http://tpolecat.github.io/2014/04/11/scalac-flags.html
   scalacOptions in (Compile, compile) ++= Seq(
     "-deprecation",
@@ -38,7 +35,11 @@ lazy val rootSettings = Seq(
     "org.scalaz" %% "scalaz-core" % "7.1.2",
     "org.spire-math" %% "spire" % "0.10.1",
     "org.scalacheck" %% "scalacheck" % "1.12.3",
-    "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.1.1"))
+    "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.1.1"),
+
+  resolvers += "bintray/non" at "http://dl.bintray.com/non/maven",
+
+  addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.5.4"))
 
 lazy val root = Project("ndim-rtree", file("."))
   .settings(commonSettings:_*)

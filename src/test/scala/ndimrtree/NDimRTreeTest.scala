@@ -4,7 +4,7 @@ import NDimRTree._, NDimRTreeOps._
 import org.scalacheck._, Arbitrary._, Prop._, Shapeless._
 import scala.collection.mutable.ArrayBuffer
 import shapeless.{ :: => :×:, _ }
-import spire._, implicits.{ eqOps => _, _ }
+import spire._, implicits.{ eqOps => _, _ }, math._
 import scalaz.{ Ordering => _, _ }, Scalaz._
 
 // tests are directly from or inspired by: https://github.com/meetup/archery/blob/2f577b03d1b1961925774e30baf1e26258b7f28e/core/src/test/scala/rtree.scala
@@ -23,7 +23,7 @@ object NDimRTreeTest extends Properties("NDimRTree") {
 
   // TODO : define a reasonable distance function
   implicit object dist extends Distance[N] {
-    def distance(a: Point[N], b: Point[N]): Double = 7.0
+    def distance(a: Point[N], b: Point[N]): Number = 7.0
   }
 
   property("insert entry") = forAll { (r: RTree[V, N], e: Entry[V, N]) =>
@@ -95,7 +95,7 @@ object NDimRTreeTest extends Properties("NDimRTree") {
   //   }
   // }
 
-  // TODO : review; noticeably modified  from original property("rtree.search works")
+  // TODO : review; noticeably modified from original property("rtree.search works")
   property("rtree.search agrees with withinBox(box, point) filtering") = forAll {
     (es: List[Entry[V, N]], p1: Point[N], p2: Point[N]) =>
 

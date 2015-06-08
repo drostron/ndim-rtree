@@ -156,5 +156,5 @@ class NDimRTreeOps
 }
 
 class PointOps[T <: HList : Distance](a: Point[T]) {
-  def distance(b: Point[T]): Double = implicitly[Distance[T]].distance(a, b)
+  def distance(b: Point[T]): Number = Distance[T].distance(a, b)
 }
