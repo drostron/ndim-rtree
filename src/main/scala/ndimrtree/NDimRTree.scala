@@ -1,7 +1,6 @@
 package ndimrtree
 
 import NDimRTree._, NDimRTreeOps._
-import scalaz.{ Order => _, _ }, Scalaz._
 import shapeless._, ops.hlist._
 import spire._, algebra._, implicits._
 
@@ -16,18 +15,18 @@ case class Node[V, T <: HList](box: Box[T], left: RTree[V, T], right: RTree[V, T
 
 object RTree {
   def apply
-    [V, T <: HList : ZWMin : ZWMax, L <: HList : ZWLB[T]#λ : LFA, U <: HList : ZWUB[T]#λ : LFA]
+    [V, T <: HList : ZWMin : ZWMax : Distance, L <: HList : ZWLB[T]#λ : LFA, U <: HList : ZWUB[T]#λ : LFA]
     (entries: Seq[Entry[V, T]])
     : RTree[V, T] =
     entries.foldLeft[RTree[V, T]](Empty[V, T]())(_ add _)
 }
 
 object Point {
-  implicit def equalInstance[T <: HList] = Equal.equalA[Point[T]]
+  implicit def eq[T <: HList] = eqInstance[Point[T]]
 }
 
 object Entry {
-  implicit def equalInstance[V, T <: HList] = Equal.equalA[Entry[V, T]]
+  implicit def eq[V, T <: HList] = eqInstance[Entry[V, T]]
 }
 
 object NDimRTree {

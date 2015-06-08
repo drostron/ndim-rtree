@@ -1,11 +1,11 @@
 package ndimrtree
 
+import distanceInstances._
 import NDimRTree._, NDimRTreeOps._
 import org.scalacheck._, Arbitrary._, Prop._, Shapeless._
 import scala.collection.mutable.ArrayBuffer
 import shapeless.{ :: => :×:, _ }
-import spire._, implicits.{ eqOps => _, _ }, math._
-import scalaz.{ Ordering => _, _ }, Scalaz._
+import spire._, compat._, implicits._, math._
 
 // tests are directly from or inspired by: https://github.com/meetup/archery/blob/2f577b03d1b1961925774e30baf1e26258b7f28e/core/src/test/scala/rtree.scala
 
@@ -13,21 +13,13 @@ object NDimRTreeTest extends Properties("NDimRTree") {
 
   // TODO : generic hlist type parameter shape?, coproduct for values, ...
 
-  val exampleArbitrary = arbitrary[String :×: HNil]
-
   type V = String
-  type N = Int :×: Double :×: String :×: HNil
+  type N = Int :×: Double :×: Long :×: HNil
 
-  // unable to use scalaz's Set Equal instance without an available scalaz.Order instance for T
-  implicit def setEqual[T] = Equal.equalA[Set[T]]
-
-  // TODO : define a reasonable distance function
-  implicit object dist extends Distance[N] {
-    def distance(a: Point[N], b: Point[N]): Number = 7.0
-  }
+  implicit def setEqual[T] = eqInstance[Set[T]]
 
   property("insert entry") = forAll { (r: RTree[V, N], e: Entry[V, N]) =>
-    r.add(e).find(e.point) === e.some
+    r.add(e).find(e.point) === Some(e)
   }
 
   property("build from list of entries") = forAll { entries: List[Entry[V, N]] =>
@@ -113,30 +105,28 @@ object NDimRTreeTest extends Properties("NDimRTree") {
 
   // TODO : property("rtree.searchIntersection works")
 
-  // property("rtree.nearest works") = forAll { (es: List[Entry[V, N]], p: Point[N]) =>
-    // val rt = RTree(es)
-    //
-    // if (es.isEmpty) {
-    //   require(rt.nearest(p).isEmpty)
-    // }
-    // else {
-    //   val e = es.min(Ordering.by((e: Entry[V, N]) => e.point.distance(p)))
-    //   val d = e.point.distance(p)
-    //   // it's possible that several points are tied for closest
-    //   // in these cases, the distances still must be equal.
-    //   println(s"rt : $rt")
-    //   println(s"rt.nearest(p) : ${rt.nearest(p)}")
-    //   require(rt.nearest(p).map(_.point.distance(p)) === Some(d))
-    // }
-    // true
-  // }
+  property("rtree.nearest works") = forAll { (es: List[Entry[V, N]], p: Point[N]) =>
+    val rt = RTree(es)
+
+    if (es.isEmpty) {
+      require(rt.nearest(p).isEmpty)
+    }
+    else {
+      val e = es.min(Ordering.by((e: Entry[V, N]) => e.point.distance(p)))
+      val d = e.point.distance(p)
+      // it's possible that several points are tied for closest
+      // in these cases, the distances still must be equal.
+      require(rt.nearest(p).map(_.point.distance(p)) === Some(d))
+    }
+    true
+  }
 
   // property("rtree.nearestK works") = forAll { (es: List[Entry[V, N]], p: Point[N], k0: Int) =>
     // val k = (k0 % 1000).abs
-    // val rt = build(es)
+    // val rt = RTree(es)
     //
-    // val as = es.map(_.geom.distance(p)).sorted.take(k).toVector
-    // val bs = rt.nearestK(p, k).map(_.geom.distance(p))
+    // val as = es.map(_.point.distance(p)).sorted.take(k).toVector
+    // val bs = rt.nearestK(p, k).map(_.point.distance(p))
     // as shouldBe bs
     // true
   // }

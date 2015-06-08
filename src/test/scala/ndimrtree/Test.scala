@@ -1,12 +1,16 @@
 package ndimrtree
 
 import shapeless._, test._
-import spire.implicits._
+import spire._, implicits._, math._
 import NDimRTree._
 
 // TODO : follow shapeless's lead on this style of testing
 
 object Test {
+
+  implicit def bogusDistance[T <: HList] = new Distance[T] {
+    def distance(a: Point[T], b: Point[T]): Number = 7.0
+  }
 
   illTyped("""
 

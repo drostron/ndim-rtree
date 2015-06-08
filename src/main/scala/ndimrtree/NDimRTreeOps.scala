@@ -1,12 +1,11 @@
 package ndimrtree
 
-import scalaz._, Scalaz._
 import shapeless._
-import spire.math._
+import spire._, implicits._, math._
 import NDimRTree._, NDimRTreeOps._
 
 // TODO : crisp up, not quite ideal yet,
-// should ops be monomorphic on rtree or have polymorphic dispatch like it is currently
+// should ops be monomorphic on rtree or have polymorphic dispatch like it is currently?
 
 object NDimRTreeOps {
   implicit def toLeafOps
@@ -22,7 +21,7 @@ object NDimRTreeOps {
     new NDimNodeOps(node)
 
   implicit def toRTreeOps
-    [V, T <: HList : ZWMin : ZWMax, L <: HList : ZWLB[T]#λ : LFA, U <: HList : ZWUB[T]#λ : LFA]
+    [V, T <: HList : ZWMin : ZWMax : Distance, L <: HList : ZWLB[T]#λ : LFA, U <: HList : ZWUB[T]#λ : LFA]
     (rtree: RTree[V, T])
     : NDimRTreeOps[V, T, L, U] =
     new NDimRTreeOps(rtree)
@@ -69,7 +68,7 @@ class NDimNodeOps
 }
 
 class NDimRTreeOps
-  [V, T <: HList : ZWMin : ZWMax, L <: HList : ZWLB[T]#λ : LFA, U <: HList : ZWUB[T]#λ : LFA]
+  [V, T <: HList : ZWMin : ZWMax : Distance, L <: HList : ZWLB[T]#λ : LFA, U <: HList : ZWUB[T]#λ : LFA]
   (rtree: RTree[V, T]) {
 
   // TODO : a bit unruly; what exactly did I mean by unruly?
@@ -94,9 +93,9 @@ class NDimRTreeOps
   def find(point: Point[T])
     : Option[Entry[V, T]] =
     rtree match {
-    case _: Empty[V, T] => None
-    case leaf: Leaf[V, T] => (leaf.entry.point === point).option(leaf.entry)
+    case leaf: Leaf[V, T] if leaf.entry.point === point => Some(leaf.entry)
     case node: Node[V, T] => node.left.find(point).orElse(node.right.find(point))
+    case _ => None
     }
 
   def contains(entry: Entry[V, T]): Boolean = find(entry.point).isDefined
@@ -112,14 +111,18 @@ class NDimRTreeOps
     case _ => Vector.empty
     }
 
-  // TODO : incorrect
   def nearest(point: Point[T])
     : Option[Entry[V, T]] =
     rtree match {
     case _: Empty[V, T] => None
-    case leaf: Leaf[V, T] => (leaf.entry.point === point).option(leaf.entry)
-    case node: Node[V, T] => node.left.find(point).orElse(node.right.find(point))
-    }
+    case leaf: Leaf[V, T] => Some(leaf.entry)
+    // TODO : utilize bounds to refine traversal
+    case node: Node[V, T] => (node.left.nearest(point), node.right.nearest(point)) match {
+      case (Some(l), Some(r)) if l.point.distance(point) < r.point.distance(point) => Some(l)
+      case (Some(l), Some(r)) => Some(r)
+      case (l, None) => l
+      case (None, r) => r
+    }}
 
   def count(space: Box[T]): Int = search(space).size
 
@@ -129,6 +132,8 @@ class NDimRTreeOps
     case Leaf(entry) => Vector(entry)
     case Node(_, left, right) => left.entries ++ right.entries
     }
+
+  // $COVERAGE-OFF$
 
   lazy val pretty: String = pretty(0)
 
@@ -152,6 +157,8 @@ class NDimRTreeOps
     case Node(box, left, right) =>
       left.leafDepths(depth + 1) ++ right.leafDepths(depth + 1)
     }
+
+  // $COVERAGE-ON$
 
 }
 
