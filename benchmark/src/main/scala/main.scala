@@ -2,6 +2,7 @@ package ndimrtree
 
 // building towards parity with the archery benchmark
 
+import distanceInstances._
 import ichi.bench.Thyme
 import NDimRTreeOps._
 import scala.util.Random.nextGaussian
@@ -10,7 +11,7 @@ import spire._, implicits._
 
 object Main {
 
-  type N = Float :: Float :: HNil
+  type N = Double :: Double :: HNil
 
   val xmin, ymin = -5000F
   val xmax, ymax = 5000F
@@ -26,7 +27,7 @@ object Main {
 
   // cluster points around (0, 0)
   def nextPoint: Point[N] =
-    Point(1000F * nextF :: 1000F * nextF :: HNil)
+    Point(1000F * nextF.toDouble :: 1000F * nextF.toDouble :: HNil)
 
   // generate box with radius r
   def nextBox(r: Int): Box[N] = {
