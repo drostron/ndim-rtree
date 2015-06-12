@@ -32,7 +32,6 @@ lazy val rootSettings = Seq(
 
   libraryDependencies ++= Seq(
     "com.chuusai" %% "shapeless" % "2.1.0",
-    "org.scalaz" %% "scalaz-core" % "7.1.2",
     "org.spire-math" %% "spire" % "0.10.1",
     "org.scalacheck" %% "scalacheck" % "1.12.3",
     "com.github.alexarchambault" %% "scalacheck-shapeless_1.12" % "0.1.1"),
