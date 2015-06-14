@@ -5,7 +5,7 @@
 
 ### talks
 
-[Generic N-Dim R-Tree Explorations](http://drostron.github.io/slides/scala-symposium/2015-06-13/#/generic-n-dim-r-tree-explorations/index.html) _Scala Symposium 2015_
+[Generic N-Dim R-Tree Explorations](http://drostron.github.io/slides/scala-symposium/2015-06-13/#/generic-n-dim-r-tree-explorations/index.html) _at Scala Symposium 2015_ [[pdf]](http://drostron.github.io/slides/scala-symposium/2015-06-13/GenericNDimRTreeExplorationsScalaSymposium2015.pdf)
 
 ### acknowledgments
 shapeless, spire, archery, ...
