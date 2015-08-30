@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/drostron/ndim-rtree.svg?branch=master)](https://travis-ci.org/drostron/ndim-rtree)
 [![codecov.io](http://codecov.io/github/drostron/ndim-rtree/coverage.svg?branch=master)](http://codecov.io/github/drostron/ndim-rtree?branch=master)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/drostron/ndim-rtree?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 An N-Dimensional Generic R-Tree leveraging Shapeless and Spire
 
