@@ -1,6 +1,6 @@
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.6",
+  scalaVersion := "2.11.7",
 
   // http://tpolecat.github.io/2014/04/11/scalac-flags.html
   scalacOptions in (Compile, compile) ++= Seq(
